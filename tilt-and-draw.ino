@@ -35,6 +35,7 @@ void loop() {
   int xAxis = Esplora.readAccelerometer(X_AXIS);
   int yAxis = Esplora.readAccelerometer(Y_AXIS);
   setPosition(xAxis, yAxis);
+  checkPosition();
   EsploraTFT.stroke(255, 255, 255);
   EsploraTFT.point(xPos, yPos);
   delay(100);
@@ -55,3 +56,17 @@ void setPosition(int xAxis, int yAxis){
   }
 }
 
+void checkPosition() {
+  if (xPos < xMin) {
+    (xPos = xMin);
+  }
+  if (xPos > xMax) {
+    (xPos = xMax);
+  }
+  if (yPos < yMin) {
+    (yPos = yMin);
+  }
+  if (yPos > yMax) {
+    (yPos = yMax);
+  }
+}
