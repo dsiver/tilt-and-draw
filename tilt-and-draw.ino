@@ -39,20 +39,23 @@ void loop() {
   draw = false;
   int xAxis = Esplora.readAccelerometer(X_AXIS);
   int yAxis = Esplora.readAccelerometer(Y_AXIS);
+  setPosition(xAxis, yAxis);
+  checkPosition();
+  drawPoint();
+  delay(100);
+}
+
+void drawPoint() {
+  EsploraTFT.stroke(255, 255, 255); // white
+  EsploraTFT.point(xPos, yPos);
   int upButtonState = Esplora.readButton(SWITCH_UP);
   int downButtonState = Esplora.readButton(SWITCH_DOWN);
   int leftButtonState = Esplora.readButton(SWITCH_LEFT);
   int rightButtonState = Esplora.readButton(SWITCH_RIGHT);
-
-  int buttonStates = upButtonState + downButtonState + leftButtonState + rightButtonState;
-  if (buttonStates == oneButtonPressed) {
+  int buttonStateSum = upButtonState + downButtonState + leftButtonState + rightButtonState;
+  if (buttonStateSum == oneButtonPressed) {
     draw = true;
   }
-
-  setPosition(xAxis, yAxis);
-  checkPosition();
-  EsploraTFT.stroke(255, 255, 255); // white
-  EsploraTFT.point(xPos, yPos);
   if (oldXPos != xPos || oldYPos != yPos) {
     if (draw) {
       if (upButtonState == LOW) {
@@ -75,7 +78,6 @@ void loop() {
   }
   oldXPos = xPos;
   oldYPos = yPos;
-  delay(100);
 }
 
 void setPosition(int xAxis, int yAxis) {
