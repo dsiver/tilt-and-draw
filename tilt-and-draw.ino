@@ -22,12 +22,13 @@
 #define sensitivity 20
 #define pixels 1
 #define oneButtonPressed 3
+#define sideLength 3
 
 int xPos = EsploraTFT.width() / 2;
 int yPos = EsploraTFT.height() / 2;
 int oldXPos = xPos;
 int oldYPos = yPos;
-boolean draw = false;
+boolean canDraw = false;
 
 void setup() {
   Serial.begin(serialBaudRate);
@@ -36,45 +37,48 @@ void setup() {
 }
 
 void loop() {
-  draw = false;
+  canDraw = false;
   int xAxis = Esplora.readAccelerometer(X_AXIS);
   int yAxis = Esplora.readAccelerometer(Y_AXIS);
   setPosition(xAxis, yAxis);
   checkPosition();
-  drawPoint();
+  draw();
+  if(abs(Esplora.readAccelerometer(X_AXIS))>200 || abs(Esplora.readAccelerometer(Y_AXIS))>200){
+    EsploraTFT.background(0, 0, 0);
+  }
   delay(100);
 }
 
-void drawPoint() {
-  EsploraTFT.stroke(255, 255, 255); // white
-  EsploraTFT.point(xPos, yPos);
+void draw() {
+  EsploraTFT.fill(255, 255, 255); // white
+  EsploraTFT.rect(xPos, yPos, sideLength, sideLength);
   int upButtonState = Esplora.readButton(SWITCH_UP);
   int downButtonState = Esplora.readButton(SWITCH_DOWN);
   int leftButtonState = Esplora.readButton(SWITCH_LEFT);
   int rightButtonState = Esplora.readButton(SWITCH_RIGHT);
   int buttonStateSum = upButtonState + downButtonState + leftButtonState + rightButtonState;
   if (buttonStateSum == oneButtonPressed) {
-    draw = true;
+    canDraw = true;
   }
   if (oldXPos != xPos || oldYPos != yPos) {
-    if (draw) {
+    if (canDraw) {
       if (upButtonState == LOW) {
-        EsploraTFT.stroke(0, 255, 255); // yellow
+        EsploraTFT.fill(0, 255, 255); // yellow
       }
       else if (downButtonState == LOW) {
-        EsploraTFT.stroke(0, 255, 0); // green
+        EsploraTFT.fill(0, 255, 0); // green
       }
       else if (leftButtonState == LOW) {
-        EsploraTFT.stroke(255, 0, 0); // blue
+        EsploraTFT.fill(255, 0, 0); // blue
       }
       else if (rightButtonState == LOW) {
-        EsploraTFT.stroke(0, 0, 255); // red
+        EsploraTFT.fill(0, 0, 255); // red
       }
     }
     else {
-      EsploraTFT.stroke(0, 0, 0);
+      EsploraTFT.fill(0, 0, 0);
     }
-    EsploraTFT.point(oldXPos, oldYPos);
+    EsploraTFT.rect(oldXPos, oldYPos, sideLength, sideLength);
   }
   oldXPos = xPos;
   oldYPos = yPos;
