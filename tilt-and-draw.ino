@@ -36,7 +36,28 @@ void loop() {
   int yAxis = Esplora.readAccelerometer(Y_AXIS);
   setPosition(xAxis, yAxis);
   checkPosition();
-  EsploraTFT.stroke(255, 255, 255);
+
+  int upButtonState = Esplora.readButton(SWITCH_UP);
+  int downButtonState = Esplora.readButton(SWITCH_DOWN);
+  int leftButtonState = Esplora.readButton(SWITCH_LEFT);
+  int rightButtonState = Esplora.readButton(SWITCH_RIGHT);
+
+  if (upButtonState == LOW){
+    EsploraTFT.stroke(0, 255, 255); // yellow
+  }
+  else if (downButtonState == LOW){
+    EsploraTFT.stroke(0, 255, 0); // green
+  }
+  else if (leftButtonState == LOW){
+    EsploraTFT.stroke(255, 0, 0); // blue
+  }
+  else if (rightButtonState == LOW){
+    EsploraTFT.stroke(0, 0, 255); // red
+  }
+  else {
+    EsploraTFT.stroke(255, 255, 255); // white
+  }
+  
   EsploraTFT.point(xPos, yPos);
   delay(100);
 }
