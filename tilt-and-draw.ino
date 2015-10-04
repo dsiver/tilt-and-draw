@@ -25,6 +25,8 @@
 
 int xPos = EsploraTFT.width() / 2;
 int yPos = EsploraTFT.height() / 2;
+int oldXPos = xPos;
+int oldYPos = yPos;
 boolean draw = false;
 
 void setup() {
@@ -35,38 +37,44 @@ void setup() {
 
 void loop() {
   draw = false;
+  int xAxis = Esplora.readAccelerometer(X_AXIS);
+  int yAxis = Esplora.readAccelerometer(Y_AXIS);
   int upButtonState = Esplora.readButton(SWITCH_UP);
   int downButtonState = Esplora.readButton(SWITCH_DOWN);
   int leftButtonState = Esplora.readButton(SWITCH_LEFT);
   int rightButtonState = Esplora.readButton(SWITCH_RIGHT);
 
   int buttonStates = upButtonState + downButtonState + leftButtonState + rightButtonState;
-  if (buttonStates == oneButtonPressed){
+  if (buttonStates == oneButtonPressed) {
     draw = true;
   }
 
-  Serial.println("draw: " + String(draw));
-
-  if (upButtonState == LOW) {
-    EsploraTFT.stroke(0, 255, 255); // yellow
-  }
-  else if (downButtonState == LOW) {
-    EsploraTFT.stroke(0, 255, 0); // green
-  }
-  else if (leftButtonState == LOW) {
-    EsploraTFT.stroke(255, 0, 0); // blue
-  }
-  else if (rightButtonState == LOW) {
-    EsploraTFT.stroke(0, 0, 255); // red
-  }
-  else {
-    EsploraTFT.stroke(255, 255, 255); // white
-  }
-  int xAxis = Esplora.readAccelerometer(X_AXIS);
-  int yAxis = Esplora.readAccelerometer(Y_AXIS);
   setPosition(xAxis, yAxis);
   checkPosition();
+  EsploraTFT.stroke(255, 255, 255); // white
   EsploraTFT.point(xPos, yPos);
+  if (oldXPos != xPos || oldYPos != yPos) {
+    if (draw) {
+      if (upButtonState == LOW) {
+        EsploraTFT.stroke(0, 255, 255); // yellow
+      }
+      else if (downButtonState == LOW) {
+        EsploraTFT.stroke(0, 255, 0); // green
+      }
+      else if (leftButtonState == LOW) {
+        EsploraTFT.stroke(255, 0, 0); // blue
+      }
+      else if (rightButtonState == LOW) {
+        EsploraTFT.stroke(0, 0, 255); // red
+      }
+    }
+    else {
+      EsploraTFT.stroke(0, 0, 0);
+    }
+    EsploraTFT.point(oldXPos, oldYPos);
+  }
+  oldXPos = xPos;
+  oldYPos = yPos;
   delay(100);
 }
 
