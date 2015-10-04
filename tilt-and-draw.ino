@@ -21,9 +21,11 @@
 #define high 100
 #define sensitivity 20
 #define pixels 1
+#define oneButtonPressed 3
 
 int xPos = EsploraTFT.width() / 2;
 int yPos = EsploraTFT.height() / 2;
+boolean draw = false;
 
 void setup() {
   Serial.begin(serialBaudRate);
@@ -32,37 +34,43 @@ void setup() {
 }
 
 void loop() {
-  int xAxis = Esplora.readAccelerometer(X_AXIS);
-  int yAxis = Esplora.readAccelerometer(Y_AXIS);
-  setPosition(xAxis, yAxis);
-  checkPosition();
-
+  draw = false;
   int upButtonState = Esplora.readButton(SWITCH_UP);
   int downButtonState = Esplora.readButton(SWITCH_DOWN);
   int leftButtonState = Esplora.readButton(SWITCH_LEFT);
   int rightButtonState = Esplora.readButton(SWITCH_RIGHT);
 
-  if (upButtonState == LOW){
+  int buttonStates = upButtonState + downButtonState + leftButtonState + rightButtonState;
+  if (buttonStates == oneButtonPressed){
+    draw = true;
+  }
+
+  Serial.println("draw: " + String(draw));
+
+  if (upButtonState == LOW) {
     EsploraTFT.stroke(0, 255, 255); // yellow
   }
-  else if (downButtonState == LOW){
+  else if (downButtonState == LOW) {
     EsploraTFT.stroke(0, 255, 0); // green
   }
-  else if (leftButtonState == LOW){
+  else if (leftButtonState == LOW) {
     EsploraTFT.stroke(255, 0, 0); // blue
   }
-  else if (rightButtonState == LOW){
+  else if (rightButtonState == LOW) {
     EsploraTFT.stroke(0, 0, 255); // red
   }
   else {
     EsploraTFT.stroke(255, 255, 255); // white
   }
-  
+  int xAxis = Esplora.readAccelerometer(X_AXIS);
+  int yAxis = Esplora.readAccelerometer(Y_AXIS);
+  setPosition(xAxis, yAxis);
+  checkPosition();
   EsploraTFT.point(xPos, yPos);
   delay(100);
 }
 
-void setPosition(int xAxis, int yAxis){
+void setPosition(int xAxis, int yAxis) {
   if (xAxis < sensitivity && xAxis > -sensitivity) {
     xPos = xPos;
   }
